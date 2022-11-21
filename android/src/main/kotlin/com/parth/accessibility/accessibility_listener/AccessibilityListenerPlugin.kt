@@ -16,6 +16,7 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry
+import android.util.Log
 
 
 var sink: EventChannel.EventSink? = null
@@ -49,7 +50,10 @@ class AccessibilityListenerPlugin : FlutterPlugin, MethodCallHandler, ActivityAw
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
         when (call.method) {
             "isAccessibilityPermissionEnabled" -> result.success(context?.let { isAccessibilitySettingsOn(it) })
-            "requestAccessibilityPermission" -> mActivity?.startActivityForResult(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS), REQUEST_CODE_FOR_ACCESSIBILITY)
+            "requestAccessibilityPermission" ->{
+                Log.e("TAG",mActivity?.toString())
+                mActivity?.startActivityForResult(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS), REQUEST_CODE_FOR_ACCESSIBILITY)
+            }
 //            "showOverlay" -> {
 //                val intent = Intent(context, OverlayService::class.java)
 //                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
