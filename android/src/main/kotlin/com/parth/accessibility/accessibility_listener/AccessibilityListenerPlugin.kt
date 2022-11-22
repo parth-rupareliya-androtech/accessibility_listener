@@ -4,10 +4,12 @@ import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.provider.Settings
+import android.util.Log
 import androidx.annotation.NonNull
 import com.parth.accessibility.accessibility_listener.Utils.isAccessibilitySettingsOn
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.plugins.FlutterPlugin
+import io.flutter.embedding.engine.plugins.FlutterPlugin.FlutterPluginBinding
 import io.flutter.embedding.engine.plugins.activity.ActivityAware
 import io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding
 import io.flutter.plugin.common.EventChannel
@@ -16,8 +18,6 @@ import io.flutter.plugin.common.MethodChannel
 import io.flutter.plugin.common.MethodChannel.MethodCallHandler
 import io.flutter.plugin.common.MethodChannel.Result
 import io.flutter.plugin.common.PluginRegistry
-import android.util.Log
-
 
 var sink: EventChannel.EventSink? = null
 
@@ -29,8 +29,9 @@ class AccessibilityListenerPlugin : FlutterPlugin, MethodCallHandler, ActivityAw
     private val pendingResult: Result? = null
     val REQUEST_CODE_FOR_ACCESSIBILITY = 167
 
-    override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
-        channel = MethodChannel(flutterPluginBinding.binaryMessenger, "accessibility_listener")
+    override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPluginBinding) {
+        Log.e("TAG", "onAttachedToEngine")
+        channel = MethodChannel(flutterPluginBinding.binaryMessenger, channelName)
         channel.setMethodCallHandler(this)
 
         context = flutterPluginBinding.applicationContext
@@ -47,11 +48,22 @@ class AccessibilityListenerPlugin : FlutterPlugin, MethodCallHandler, ActivityAw
         })
     }
 
+    companion object {
+        val channelName = "accessibility_listener"
+
+//        @JvmStatic
+//        fun registerWith(registrar: Registrar) {
+//            val channel = MethodChannel(registrar.messenger(), channelName)
+//            channel.setMethodCallHandler(AccessibilityListenerPlugin())
+//        }
+    }
+
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
+        Log.e("TAG", "onMethodCall")
         when (call.method) {
             "isAccessibilityPermissionEnabled" -> result.success(context?.let { isAccessibilitySettingsOn(it) })
-            "requestAccessibilityPermission" ->{
-                Log.e("TAG",mActivity?.toString())
+            "requestAccessibilityPermission" -> {
+                Log.e("TAG", mActivity.toString())
                 mActivity?.startActivityForResult(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS), REQUEST_CODE_FOR_ACCESSIBILITY)
             }
 //            "showOverlay" -> {
@@ -74,12 +86,14 @@ class AccessibilityListenerPlugin : FlutterPlugin, MethodCallHandler, ActivityAw
         }
     }
 
-    override fun onDetachedFromEngine(@NonNull binding: FlutterPlugin.FlutterPluginBinding) {
+    override fun onDetachedFromEngine(@NonNull binding: FlutterPluginBinding) {
+        Log.e("TAG", "onDetachedFromEngine")
         channel.setMethodCallHandler(null)
         eventChannel.setStreamHandler(null)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
+        Log.e("TAG", "onActivityResult")
         if (requestCode == REQUEST_CODE_FOR_ACCESSIBILITY) {
             when (resultCode) {
                 FlutterActivity.RESULT_OK -> pendingResult?.success(true)
@@ -92,19 +106,21 @@ class AccessibilityListenerPlugin : FlutterPlugin, MethodCallHandler, ActivityAw
     }
 
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
+        Log.e("TAG", "onAttachedToActivity")
         mActivity = binding.activity
         binding.addActivityResultListener(this)
     }
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
+        Log.e("TAG", "onReattachedToActivityForConfigChanges")
         onAttachedToActivity(binding)
     }
 
     override fun onDetachedFromActivityForConfigChanges() {
-        mActivity = null
+        Log.e("TAG", "onDetachedFromActivityForConfigChanges")
     }
 
     override fun onDetachedFromActivity() {
-        mActivity = null
+        Log.e("TAG", "onDetachedFromActivity")
     }
 }
