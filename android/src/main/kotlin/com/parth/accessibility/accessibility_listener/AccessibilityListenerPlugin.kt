@@ -113,6 +113,11 @@ class AccessibilityListenerPlugin : FlutterPlugin, MethodCallHandler, ActivityAw
     override fun onAttachedToActivity(binding: ActivityPluginBinding) {
         Log.e("TAG", "onAttachedToActivity")
         mActivity = binding.activity
+        Log.e("TAG", binding.toString())
+        Log.e("TAG", binding.activity.toString())
+        binding.activity.callingPackage?.let { Log.e("TAG", it) }
+        binding.activity.componentName.className.let { Log.e("TAG", it) }
+
         binding.addActivityResultListener(this)
         channel.setMethodCallHandler(this)
         eventChannel.setStreamHandler(object : EventChannel.StreamHandler {
