@@ -31,21 +31,25 @@ class AccessibilityListenerPlugin : FlutterPlugin, MethodCallHandler, ActivityAw
 
     override fun onAttachedToEngine(@NonNull flutterPluginBinding: FlutterPluginBinding) {
         Log.e("TAG", "onAttachedToEngine")
+//        channel = MethodChannel(flutterPluginBinding.binaryMessenger, channelName)
+//        channel.setMethodCallHandler(this)
+//
+//        context = flutterPluginBinding.applicationContext
+//        eventChannel = EventChannel(flutterPluginBinding.binaryMessenger, "accessibility_listener_event")
+//        eventChannel.setStreamHandler(object : EventChannel.StreamHandler {
+//            override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+//                sink = events
+//            }
+//
+//            override fun onCancel(arguments: Any?) {
+//                sink?.endOfStream()
+//                sink = null
+//            }
+//        })
+
         channel = MethodChannel(flutterPluginBinding.binaryMessenger, channelName)
-        channel.setMethodCallHandler(this)
-
-        context = flutterPluginBinding.applicationContext
         eventChannel = EventChannel(flutterPluginBinding.binaryMessenger, "accessibility_listener_event")
-        eventChannel.setStreamHandler(object : EventChannel.StreamHandler {
-            override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
-                sink = events
-            }
-
-            override fun onCancel(arguments: Any?) {
-                sink?.endOfStream()
-                sink = null
-            }
-        })
+        context = flutterPluginBinding.applicationContext
     }
 
     companion object {
@@ -60,6 +64,7 @@ class AccessibilityListenerPlugin : FlutterPlugin, MethodCallHandler, ActivityAw
 
     override fun onMethodCall(@NonNull call: MethodCall, @NonNull result: Result) {
         Log.e("TAG", "onMethodCall")
+        Log.e("TAG", call.method)
         when (call.method) {
             "isAccessibilityPermissionEnabled" -> result.success(context?.let { isAccessibilitySettingsOn(it) })
             "requestAccessibilityPermission" -> {
@@ -109,6 +114,17 @@ class AccessibilityListenerPlugin : FlutterPlugin, MethodCallHandler, ActivityAw
         Log.e("TAG", "onAttachedToActivity")
         mActivity = binding.activity
         binding.addActivityResultListener(this)
+        channel.setMethodCallHandler(this)
+        eventChannel.setStreamHandler(object : EventChannel.StreamHandler {
+            override fun onListen(arguments: Any?, events: EventChannel.EventSink?) {
+                sink = events
+            }
+
+            override fun onCancel(arguments: Any?) {
+                sink?.endOfStream()
+                sink = null
+            }
+        })
     }
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
