@@ -44,7 +44,5 @@ class AccessibilityListener : AccessibilityService() {
         return frame
     }
 
-    override fun onInterrupt() {
-
-    }
+    override fun onInterrupt() {}
 }

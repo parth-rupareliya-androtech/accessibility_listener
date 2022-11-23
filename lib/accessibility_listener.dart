@@ -35,4 +35,23 @@ class AccessibilityListener {
       return false;
     }
   }
+
+  static const MethodChannel _overlayMethodeChannel = MethodChannel("slayer/overlay_channel");
+
+  static Future<void> showOverlay() async {
+    try {
+      await _overlayMethodeChannel.invokeMethod("showOverlay");
+    } on PlatformException catch (error) {
+      print("$error");
+    }
+  }
+
+  static Future<bool> closeOverlay() async {
+    try {
+      return await _overlayMethodeChannel.invokeMethod("closeOverlay");
+    } on PlatformException catch (error) {
+      print("$error");
+    }
+    return false;
+  }
 }
