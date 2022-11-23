@@ -54,4 +54,13 @@ class AccessibilityListener {
     }
     return false;
   }
+
+  static Future<bool> isActive() async {
+    try {
+      return await _overlayMethodeChannel.invokeMethod("isOverlayActive");
+    } on PlatformException catch (error) {
+      print("$error");
+    }
+    return false;
+  }
 }
