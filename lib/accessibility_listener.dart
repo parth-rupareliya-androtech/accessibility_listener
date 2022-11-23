@@ -6,11 +6,11 @@ import 'package:flutter/services.dart';
 class AccessibilityListener {
   AccessibilityListener._();
 
-  static const MethodChannel _methodeChannel = MethodChannel("accessibility_listener");
-  static const EventChannel _eventChannel = EventChannel("accessibility_listener_event");
-  static Stream? _stream;
+  final MethodChannel _methodeChannel = const MethodChannel("accessibility_listener");
+  final EventChannel _eventChannel = const EventChannel("accessibility_listener_event");
+  Stream? _stream;
 
-  static Stream get accessStream {
+  Stream get accessStream {
     if (Platform.isAndroid) {
       _stream ??= _eventChannel.receiveBroadcastStream();
       return _stream!;
@@ -18,7 +18,7 @@ class AccessibilityListener {
     throw Exception("Accessibility API exclusively available on Android!");
   }
 
-  static Future<bool> requestAccessibilityPermission() async {
+  Future<bool> requestAccessibilityPermission() async {
     try {
       return await _methodeChannel.invokeMethod('requestAccessibilityPermission');
     } on PlatformException catch (error) {
@@ -27,7 +27,7 @@ class AccessibilityListener {
     }
   }
 
-  static Future<bool> isAccessibilityPermissionEnabled() async {
+  Future<bool> isAccessibilityPermissionEnabled() async {
     try {
       return await _methodeChannel.invokeMethod('isAccessibilityPermissionEnabled');
     } on PlatformException catch (error) {
@@ -36,9 +36,9 @@ class AccessibilityListener {
     }
   }
 
-  static const MethodChannel _overlayMethodeChannel = MethodChannel("slayer/overlay_channel");
+  final MethodChannel _overlayMethodeChannel = const MethodChannel("slayer/overlay_channel");
 
-  static Future<void> showOverlay() async {
+  Future<void> showOverlay() async {
     try {
       await _overlayMethodeChannel.invokeMethod("showOverlay");
     } on PlatformException catch (error) {
@@ -46,7 +46,7 @@ class AccessibilityListener {
     }
   }
 
-  static Future<bool> closeOverlay() async {
+  Future<bool> closeOverlay() async {
     try {
       return await _overlayMethodeChannel.invokeMethod("closeOverlay");
     } on PlatformException catch (error) {
@@ -55,7 +55,7 @@ class AccessibilityListener {
     return false;
   }
 
-  static Future<bool> isActive() async {
+  Future<bool> isActive() async {
     try {
       return await _overlayMethodeChannel.invokeMethod("isOverlayActive");
     } on PlatformException catch (error) {
