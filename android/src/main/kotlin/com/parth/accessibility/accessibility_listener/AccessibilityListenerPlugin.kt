@@ -26,13 +26,13 @@ var sink: EventChannel.EventSink? = null
 
 class AccessibilityListenerPlugin : FlutterPlugin, MethodCallHandler, ActivityAware, PluginRegistry.ActivityResultListener {
     private lateinit var channel: MethodChannel
-    private lateinit var overlayChannel: MethodChannel
+//    private lateinit var overlayChannel: MethodChannel
     private lateinit var eventChannel: EventChannel
     private lateinit var context: Context
     private lateinit var mActivity: Activity
     private var pendingResult: Result? = null
     val REQUEST_CODE_FOR_ACCESSIBILITY = 167
-    private var handler: OverlayMethodCallHandler? = null
+//    private var handler: OverlayMethodCallHandler? = null
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?): Boolean {
         if (requestCode == REQUEST_CODE_FOR_ACCESSIBILITY) {
@@ -63,12 +63,12 @@ class AccessibilityListenerPlugin : FlutterPlugin, MethodCallHandler, ActivityAw
             }
         })
 
-        if (handler == null) {
-            handler = OverlayMethodCallHandler(context)
-        }
-        MethodChannel(flutterPluginBinding.binaryMessenger, OverlayConstants.CHANNEL_TAG).setMethodCallHandler(handler)
-        val messenger = BasicMessageChannel(flutterPluginBinding.binaryMessenger, OverlayConstants.MESSENGER_TAG, JSONMessageCodec.INSTANCE)
-        messenger.setMessageHandler(handler)
+//        if (handler == null) {
+//            handler = OverlayMethodCallHandler(context)
+//        }
+//        MethodChannel(flutterPluginBinding.binaryMessenger, OverlayConstants.CHANNEL_TAG).setMethodCallHandler(handler)
+//        val messenger = BasicMessageChannel(flutterPluginBinding.binaryMessenger, OverlayConstants.MESSENGER_TAG, JSONMessageCodec.INSTANCE)
+//        messenger.setMessageHandler(handler)
     }
 
     override fun onDetachedFromEngine(@NonNull binding: FlutterPluginBinding) {
@@ -81,10 +81,10 @@ class AccessibilityListenerPlugin : FlutterPlugin, MethodCallHandler, ActivityAw
         binding.addActivityResultListener(this)
 
         // Overlay
-        FlutterEngineCache.getInstance().put(
-            OverlayConstants.CACHED_TAG,
-            FlutterEngineGroup(context).createAndRunEngine(context, DartEntrypoint(FlutterInjector.instance().flutterLoader().findAppBundlePath(), "overlaySecondary"))
-        )
+//        FlutterEngineCache.getInstance().put(
+//            OverlayConstants.CACHED_TAG,
+//            FlutterEngineGroup(context).createAndRunEngine(context, DartEntrypoint(FlutterInjector.instance().flutterLoader().findAppBundlePath(), "overlaySecondary"))
+//        )
     }
 
     override fun onReattachedToActivityForConfigChanges(binding: ActivityPluginBinding) {
@@ -105,22 +105,22 @@ class AccessibilityListenerPlugin : FlutterPlugin, MethodCallHandler, ActivityAw
                 Log.e("TAG", mActivity.toString())
                 mActivity.startActivityForResult(Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS), REQUEST_CODE_FOR_ACCESSIBILITY)
             }
-            "showOverlay" -> {
-                val intent = Intent(context, OverlayService::class.java)
-                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
-                context.startService(intent)
-                result.success(null)
-            }
-            "isOverlayActive" -> result.success(OverlayService.isRunning)
-            "closeOverlay" -> {
-                if (OverlayService.isRunning) {
-                    val i = Intent(context, OverlayService::class.java)
-                    i.putExtra(OverlayService.INTENT_EXTRA_IS_CLOSE_WINDOW, true)
-                    context.startService(i)
-                    result.success(true)
-                }
-            }
+//            "showOverlay" -> {
+//                val intent = Intent(context, OverlayService::class.java)
+//                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+//                intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP)
+//                context.startService(intent)
+//                result.success(null)
+//            }
+//            "isOverlayActive" -> result.success(OverlayService.isRunning)
+//            "closeOverlay" -> {
+//                if (OverlayService.isRunning) {
+//                    val i = Intent(context, OverlayService::class.java)
+//                    i.putExtra(OverlayService.INTENT_EXTRA_IS_CLOSE_WINDOW, true)
+//                    context.startService(i)
+//                    result.success(true)
+//                }
+//            }
             else -> result.notImplemented()
         }
     }
