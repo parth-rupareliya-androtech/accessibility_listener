@@ -4,8 +4,6 @@ import 'dart:io';
 import 'package:flutter/services.dart';
 
 class AccessibilityListener {
-  AccessibilityListener._();
-
   final MethodChannel _methodeChannel = const MethodChannel("accessibility_listener");
   final EventChannel _eventChannel = const EventChannel("accessibility_listener_event");
   Stream? _stream;
